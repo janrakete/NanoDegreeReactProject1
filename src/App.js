@@ -1,5 +1,6 @@
 import "./App.css";
 import React from "react";
+import {useEffect, useState} from 'react';
 import { Route, Routes, BrowserRouter  } from "react-router-dom";
 
 import ListBooks from "./components/ListBooks";
@@ -7,32 +8,30 @@ import ListSearch from "./components/ListSearch";
 
 import * as BooksAPI from "./BooksAPI";
 
-class App extends React.Component {
+function App() {
 
-  state = { books: [] };
+  const [books, booksGetAll] = useState([]);
 
-  componentDidMount() {
-    BooksAPI.getAll().then(books => this.setState({ books }));
-  }
+  useEffect(() => {
+    BooksAPI.getAll().then((books) => {booksGetAll(books)});
+  }, []);
 
-  bookUpdate = (book, shelf) => {
+  const booksUpdate = (book, shelf) => {
     BooksAPI.update(book, shelf).then(response => { 
-      BooksAPI.getAll().then(books => this.setState({ books }));
-    });
+      BooksAPI.getAll().then((books) => {booksGetAll(books)});
+    }) ;
   }
 
-  render() {
-    return (
-      <BrowserRouter>
-        <div className="app">
-          <Routes>
-            <Route path="/" exact element={<ListBooks books={this.state.books} bookUpdate={this.bookUpdate} />} />
-            <Route path="/search" element={<ListSearch books={this.state.books} bookUpdate={this.bookUpdate} />} />
-          </Routes>
-        </div>
-      </BrowserRouter>
-      )
-    }
+  return (
+    <BrowserRouter>
+      <div className="app">
+        <Routes>
+          <Route path="/" exact element={<ListBooks books={books} bookUpdate={booksUpdate} />} />
+          <Route path="/search" element={<ListSearch books={books} bookUpdate={booksUpdate} />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
+    )
   }
 
 export default App;
