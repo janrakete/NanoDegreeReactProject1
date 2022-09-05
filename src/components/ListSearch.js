@@ -18,34 +18,40 @@ function ListSearch(props) {
 
     const query = event.target.value;
 
-    BooksAPI.search(query).then((booksFound) => {
-      // Check if books were found by API
-      if (booksFound.length > 0) {
-      
-        // Loop through book returned by API
-        booksFound.map((bookFound) => {
-          console.log(bookFound);
+    if (query.trim().length > 0) {
+      BooksAPI.search(query).then((booksFound) => {
+        // Check if books were found by API
+        if (booksFound.length > 0) {
+        
+          // Loop through book returned by API
+          booksFound.map((bookFound) => {
+            console.log(bookFound);
 
-          // Check if there is a book in the shelf which is also returned by the API
-          var bookMatch = props.books.find(book => book.id === bookFound.id);
+            // Check if there is a book in the shelf which is also returned by the API
+            var bookMatch = props.books.find(book => book.id === bookFound.id);
 
-          // If yes, add the correct shelf
-          if (bookMatch) {
-            console.log("Found this book also in shelf.");
-            bookFound.shelf = bookMatch.shelf;
-          }
-          else 
-            bookFound.shelf = "none";
+            // If yes, add the correct shelf
+            if (bookMatch) {
+              console.log("Found this book also in shelf.");
+              bookFound.shelf = bookMatch.shelf;
+            }
+            else 
+              bookFound.shelf = "none";
 
-          // Add modified book to the new booksFoundWithShelfAdded array
-          booksFoundWithShelfAdded.push(bookFound);
-        });
-      }
-      console.log(booksFoundWithShelfAdded);
+            // Add modified book to the new booksFoundWithShelfAdded array
+            booksFoundWithShelfAdded.push(bookFound);
+          });
+        }
+        console.log(booksFoundWithShelfAdded);
 
-      // Return booksFoundWithShelfAdded array
-      booksSearch(booksFoundWithShelfAdded);
-    });  
+        // Return booksFoundWithShelfAdded array
+        booksSearch(booksFoundWithShelfAdded);
+      });
+    }  
+    else {
+      console.log("Query empty");
+      booksSearch([]);
+    }
   }
 
   return (
